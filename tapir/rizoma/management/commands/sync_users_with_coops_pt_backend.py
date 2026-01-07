@@ -79,6 +79,9 @@ class Command(BaseCommand):
                 if user.email != user_json["email"]:
                     user.email = user_json["email"]
                     needs_update = True
+                if user.username != user_json["email"]:
+                    user.username = user_json["email"]
+                    needs_update = True
                 if CoopsPtAuthBackend.update_admin_status(user, user_json["type"]):
                     needs_update = True
 
