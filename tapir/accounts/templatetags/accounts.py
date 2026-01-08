@@ -3,6 +3,7 @@ from django import template
 from django.conf import settings
 from django.template.defaultfilters import stringfilter
 from phonenumbers import PhoneNumberFormat
+from phonenumbers.phonenumberutil import NumberParseException
 
 from tapir.accounts.models import TapirUser
 from tapir.utils.user_utils import UserUtils
@@ -13,16 +14,20 @@ register = template.Library()
 @register.filter
 @stringfilter
 def format_phone_number(phone_number):
-    return (
-        phonenumbers.format_number(
-            phonenumbers.parse(
-                number=phone_number, region=settings.PHONENUMBER_DEFAULT_REGION
-            ),
-            PhoneNumberFormat.INTERNATIONAL,
+    try:
+        return (
+            phonenumbers.format_number(
+                phonenumbers.parse(
+                    number=phone_number, region=settings.PHONENUMBER_DEFAULT_REGION
+                ),
+                PhoneNumberFormat.INTERNATIONAL,
+            )
+            if phone_number
+            else ""
         )
-        if phone_number
-        else ""
-    )
+    except NumberParseException:
+        return phone_number
+
 
 
 @register.inclusion_tag("accounts/purchase_tracking_card.html", takes_context=True)
