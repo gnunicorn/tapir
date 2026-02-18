@@ -16,6 +16,17 @@
 {% block content %}
 
 {% comment %}
+ Warning box for users without qualifications
+{% endcomment %}
+
+{% if not user.shift_user_data.capabilities %}
+<div class="alert alert-warning m-3">
+    <h1>{% translate 'No qualifications' %}</h1>
+    <p>{% translate 'It appears you have no current qualifications. Please contact the members team to schedule a training sessions and receive the qualifications to select shifts.' %}</p>
+</div>
+{% endif %}
+
+{% comment %}
  Intro card
 
  copied from user_shifts_overview_tag
