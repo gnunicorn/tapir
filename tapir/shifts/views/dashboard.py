@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db.models import Count, Q, F, Exists, OuterRef, Subquery
+from django.db.models import Exists, OuterRef
 from tapir.shifts.models import (
     Shift,
     ShiftAttendance,
@@ -59,27 +59,33 @@ class UserDashboardView(LoginRequiredMixin,TemplateView):
         # we preload all related objects to avoid doing many database requests.
         # Filter for upcoming shifts the user can attend but isn't already attending
 
-        # Create subquery to check if user has required capabilities for any slot in the shift
-        user_capabilities = user.shift_user_data.capabilities.values_list('id', flat=True)
+        now = timezone.now()
 
-        # Subquery to find shifts where user can attend at least one slot
-        attendable_slots_subquery = ShiftSlot.objects.filter(
-            # Slot is available (no valid attendance or looking for stand-in)
-            Q(attendances__isnull=True) |
-            Q(attendances__state=ShiftAttendance.State.LOOKING_FOR_STAND_IN),
-            # User has required capabilities (if any required)
-            Q(required_capabilities__isnull=True) |
-            Q(required_capabilities__in=user_capabilities),
-            # User is active member
-            shift__start_time__gt=timezone.now(),
-            shift=OuterRef('pk'),
-        ).exclude(
-            # User not already attending this shift
-            shift__slots__attendances__user=user,
-            shift__slots__attendances__state__in=ShiftAttendance.VALID_STATES
+        # A slot is "blocked" iff it has a PENDING or DONE attendance. CANCELLED /
+        # MISSED rows leave the slot empty and joinable; LOOKING_FOR_STAND_IN means
+        # someone is looking to be replaced — also joinable.
+        slot_blocked_subquery = ShiftAttendance.objects.filter(
+            slot=OuterRef("pk"),
+            state__in=[
+                ShiftAttendance.State.PENDING,
+                ShiftAttendance.State.DONE,
+            ],
         )
 
-        # Get upcoming shifts with database-level filtering for availability and user eligibility
+        joinable_slot_subquery = ShiftSlot.objects.annotate(
+            blocked=Exists(slot_blocked_subquery),
+        ).filter(blocked=False, shift=OuterRef("pk"))
+
+        # The user is already attending this shift if any of its slots has a valid
+        # attendance owned by them. Done as Exists so the user/state pair stays on
+        # the same row — bare `.exclude(user=…, state__in=…)` would over-exclude
+        # because Django evaluates each lookup against potentially different rows.
+        user_attending_subquery = ShiftAttendance.objects.filter(
+            slot__shift=OuterRef("pk"),
+            user=user,
+            state__in=ShiftAttendance.VALID_STATES,
+        )
+
         shifts = (
             Shift.objects.prefetch_related("slots")
             .prefetch_related("slots__attendances")
@@ -91,70 +97,51 @@ class UserDashboardView(LoginRequiredMixin,TemplateView):
             .prefetch_related("shift_template__group")
             .prefetch_related("slots__required_capabilities")
             .annotate(
-                # Count total slots in the shift
-                total_slots=Count("slots", distinct=True),
-                # Count occupied slots (slots with valid attendances that are not looking for stand-in)
-                occupied_slots=Count(
-                    "slots__attendances",
-                    filter=Q(
-                        slots__attendances__state__in=[
-                            ShiftAttendance.State.PENDING,
-                            ShiftAttendance.State.DONE,
-                        ]
-                    ),
-                    distinct=True
-                ),
-                # Check if user can attend any slot in this shift
-                has_attendable_slots=Exists(attendable_slots_subquery)
+                has_joinable_slot=Exists(joinable_slot_subquery),
+                user_attending=Exists(user_attending_subquery),
             )
             .filter(
-                start_time__gte=date_from,
+                start_time__gt=now,
                 start_time__lt=date_to + datetime.timedelta(days=1),
-
                 deleted=False,
                 cancelled=False,
-                # Shift has available slots (not completely full)
-                occupied_slots__lt=F("total_slots"),
-                # User can attend at least one slot
-                has_attendable_slots=True,
-            )
-            .exclude(
-                # Exclude shifts user is already attending with valid state
-                slots__attendances__user=user,
-                slots__attendances__state__in=ShiftAttendance.VALID_STATES
+                has_joinable_slot=True,
+                user_attending=False,
             )
             .order_by("start_time")[:200]
         )
 
-        # Since we already filtered at database level, we just need to add attendable slots info
-        # and deduplicate by slot type for display
+        # Final per-slot pass: capabilities are checked here because the SQL
+        # version (`required_capabilities__in=…`) is wrong for multi-cap slots —
+        # it matches when the user has any one of the required caps, not all.
+        user_capabilities = set(user.shift_user_data.capabilities.all())
+
+        attendable_shifts = []
         for shift in shifts:
-            # Get unique slot types that user can attend
             attendable_slots = []
             seen_slot_types = set()
-
-            # Use prefetched data to avoid additional queries
             for slot in shift.slots.all():
-                # Quick check using prefetched data - most filtering already done at DB level
-                if not slot.get_valid_attendance(): # or
-                    # slot.get_valid_attendance().state == ShiftAttendance.State.LOOKING_FOR_STAND_IN):
+                valid = slot.get_valid_attendance()
+                if (
+                    valid is not None
+                    and valid.state != ShiftAttendance.State.LOOKING_FOR_STAND_IN
+                ):
+                    continue
+                if not set(slot.required_capabilities.all()).issubset(user_capabilities):
+                    continue
+                slot_type = slot.name if slot.name else shift.name
+                if slot_type in seen_slot_types:
+                    continue
+                attendable_slots.append(slot)
+                seen_slot_types.add(slot_type)
 
-                    # Use slot name as the type identifier, fallback to shift name if slot has no name
-                    slot_type = slot.name if slot.name else shift.name
+            if attendable_slots:
+                shift.attendable_slots = attendable_slots
+                attendable_shifts.append(shift)
 
-                    # Only add if we haven't seen this slot type yet for this shift
-                    if slot_type not in seen_slot_types:
-                        attendable_slots.append(slot)
-                        seen_slot_types.add(slot_type)
+        shifts = attendable_shifts
 
-            # Add the attendable slots as an attribute for template use
-            shift.attendable_slots = attendable_slots
-
-        # Sort shifts by start time for the table display
-        shifts = sorted(shifts, key=lambda s: s.start_time)
-
-        # Separate urgent shifts (within 7 days and all slots empty) - use database annotation
-        now = timezone.now()
+        # Urgent: any joinable shift starting within the next 7 days.
         urgent_cutoff = now + datetime.timedelta(days=7)
 
         # Use list comprehension for better performance
