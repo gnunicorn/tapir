@@ -89,10 +89,16 @@ class RizomaAllShiftsView(LoginRequiredMixin, TemplateView):
             if not has_this_shift_time:
                 shifts_infos_by_day[shift_day]["times"].append(shift_times)
 
-            # browser all the slot's names and add them to the types list
+            # Collect slot type labels for this day. Empty slot names are
+            # rendered as "General" by format_shift_for_template, so we have to
+            # use the same key here or the template's dictionary_get lookup will
+            # miss and the slot becomes invisible.
             for slot in shift.slots.all():
-                if slot.name not in infos["shifts_types"]:
-                    shifts_infos_by_day[shift_day]["shifts_types"].append(slot.name)
+                if slot.deleted:
+                    continue
+                slot_name = slot.name if slot.name else _("General")
+                if slot_name not in infos["shifts_types"]:
+                    shifts_infos_by_day[shift_day]["shifts_types"].append(slot_name)
 
             shifts_infos_by_day[shift_day]["shifts"].append(format_shift_for_template(shift, False))
 

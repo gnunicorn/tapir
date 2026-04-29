@@ -45,7 +45,8 @@ def get_attendance_details(slot: ShiftSlot) -> str:
 def format_shift_for_template(shift: Shift, fill_parent: bool):
     attendances = {}
 
-    slots = sort_slots_by_name(list(shift.slots.all()))
+    slots = [slot for slot in shift.slots.all() if not slot.deleted]
+    slots = sort_slots_by_name(slots)
 
     for slot in slots:
         slot_name = slot.name
