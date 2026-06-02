@@ -1,0 +1,232 @@
+{% extends "core/base.html" %}
+{% load statistics %}
+{% load core %}
+{% load django_bootstrap5 %}
+{% load static %}
+{% load i18n %}
+{% load utils %}
+{% block title %}
+    {% translate 'Main statistics' %}
+{% endblock title %}
+{% block head %}
+    <script src="{% static 'statistics/chart_4.4.0.js' %}"></script>
+    <script src="{% static 'statistics/tapir_charts.js' %}" defer></script>
+{% endblock head %}
+{% block content %}
+    {% if empty_abcd_shifts %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-2">
+                    <h5 class="card-header">{% translate "Empty regular shifts" %}</h5>
+                    <div class="card-body">
+                        <p>
+                            {% blocktranslate %}
+                                Regular (ABCD) shifts with at least one free permanent slot, by type.
+                                "Partially filled" means some — but not all — slots of that type in the
+                                shift are taken; "completely empty" means none are taken.
+                            {% endblocktranslate %}
+                        </p>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{% translate "Type" %}</th>
+                                    <th class="text-end">{% translate "Empty" %}</th>
+                                    <th class="text-end">{% translate "Partially filled" %}</th>
+                                    <th class="text-end">{% translate "Completely empty" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in empty_abcd_shifts.rows %}
+                                    <tr>
+                                        <td>{{ row.type }}</td>
+                                        <td class="text-end">{{ row.empty }}</td>
+                                        <td class="text-end">{{ row.partial }}</td>
+                                        <td class="text-end">{{ row.completely_empty }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="fw-bold">
+                                    <td>{% translate "Total" %}</td>
+                                    <td class="text-end">{{ empty_abcd_shifts.totals.empty }}</td>
+                                    <td class="text-end">{{ empty_abcd_shifts.totals.partial }}</td>
+                                    <td class="text-end">{{ empty_abcd_shifts.totals.completely_empty }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card mb-2">
+                <h5 class="card-header">{% translate "Total number of members" %}</h5>
+                <div class="card-body">
+                    <p>
+                        {% blocktranslate with number_of_members_now=number_of_members_now %}
+                            All members of the cooperative - whether investing or active: {{ number_of_members_now }}.
+                        {% endblocktranslate %}
+                    </p>
+                    <p>
+                        {% translate "Evolution of member count" as chart_name %}
+                        {% on_demand_chart chart_name "statistics:member_count_evolution_json" %}
+                    </p>
+                    <p>
+                        {% translate "New members per month" as chart_name %}
+                        {% on_demand_chart chart_name "statistics:new_members_per_month_json" %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card mb-2">
+                <h5 class="card-header">{% translate "Targets for break-even" %}</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <h5>{% translate 'Shopping basket' %}</h5>
+                        <p>
+                            {% blocktranslate with target_basket=target_average_monthly_basket %}
+                                The current target food basket value per member and per month to reach the break-even is
+                                {{ target_basket }}€. If you have enabled purchase tracking, you can see your average
+                                basket value on your profile page.
+                            {% endblocktranslate %}
+                        </p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>{% translate 'Members eligible to purchase' %}</h5>
+                        <p>
+                            {% blocktranslate with target_count=purchasing_members.target_count current_count=purchasing_members.current_count %}
+                                <p>
+                                    All working members and all members who have an exemption (such as parental leave,
+                                    over 70, etc.). Members who are frozen (and have not yet signed up for their
+                                    catch-up shifts) or on break (3 shift cycles or longer away) are not eligible to
+                                    purchase.
+                                </p>
+                                <p>
+                                    Target number of purchasing members for break-even: {{ target_count }}.
+                                </p>
+                            {% endblocktranslate %}
+                        </p>
+                        <p>
+                            <span class="progress" style="width: 400px; height:30px;">
+                                <span class="progress-bar bg-primary"
+                                      role="progressbar"
+                                      style="width: {{ purchasing_members.progress }}%">
+                                    {% translate "Current" %}: {{ purchasing_members.current_count }}
+                                </span>
+                                <span class="progress-bar bg-secondary"
+                                      role="progressbar"
+                                      style="width: {{ purchasing_members.missing_progress }}%">
+                                    {% translate "Missing" %}: {{ purchasing_members.missing_count }}
+                                </span>
+                            </span>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card mb-2">
+                <h5 class="card-header">{% translate "Working members" %}</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <p>
+                            {% blocktranslate with target_count=working_members.target_count %}
+                                Working members are active members who do not have an exemption. Exemptions are, for
+                                example, one year of parental leave, prolonged illness or members over 70 years of age.
+                                Required number of working members to fulfil all shift placements: {{ target_count }}.
+                            {% endblocktranslate %}
+                        </p>
+                        <p>
+                            <span class="progress" style="width: 400px; height:30px;">
+                                <span class="progress-bar bg-primary"
+                                      role="progressbar"
+                                      style="width: {{ working_members.progress }}%">
+                                    {% translate "Current" %}: {{ working_members.current_count }}
+                                </span>
+                                <span class="progress-bar bg-secondary"
+                                      role="progressbar"
+                                      style="width: {{ working_members.missing_progress }}%">
+                                    {% translate "Missing" %}: {{ working_members.missing_count }}
+                                </span>
+                            </span>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card mb-2">
+                <h5 class="card-header">{% translate "Frozen members" %}</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <p>
+                            {% blocktranslate %}
+                                Any member who is registered as an active member but is 4 or more shifts short and
+                                therefore
+                                not eligible to purchase again until they sign up for the appropriate make-up shifts.
+                            {% endblocktranslate %}
+                        </p>
+                        <p>
+                            {% translate "Frozen members" as chart_name %}
+                            {% on_demand_chart chart_name "statistics:frozen_members_json" %}
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card mb-2">
+                    <h5 class="card-header">{% translate "Co-purchasers" %}</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <p>
+                                {% blocktranslate %}
+                                    Each member can designate one person (whether in their own household or not) to shop
+                                    under the same membership number. This can be investing members or non-members.
+                                {% endblocktranslate %}
+                            </p>
+                            <p>
+                                {% translate "Co-Purchasers" as chart_name %}
+                                {% on_demand_chart chart_name "statistics:co_purchasers_json" %}
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% if campaigns.exists %}
+                <div class="col-xl-6">
+                    <div class="card mb-2">
+                        <h5 class="card-header">{{ campaigns.0.name }}</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <p>
+                                    {% blocktranslate %}
+                                        Here you can follow the progress of the funding campaign. Both additional shares
+                                        (all shares that are subscribed to over and above the compulsory share) and
+                                        subordinated loans are counted. The period runs from 12.09.2023 - 09.12.2023.
+                                        What one person can't achieve, many can!
+                                    {% endblocktranslate %}
+                                </p>
+                                {% if perms.coop.admin %}
+                                    <p>
+                                        (Visible only to the Vorstand) the current number of extra shares
+                                        is {{ extra_shares }}.
+                                    </p>
+                                {% endif %}
+                            </li>
+                            {% for campaign in campaigns %}
+                                <li class="list-group-item">{% on_demand_chart campaign.name "statistics:financing_campaign_json" campaign.id %}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

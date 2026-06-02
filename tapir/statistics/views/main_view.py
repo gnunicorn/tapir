@@ -1,6 +1,7 @@
 import datetime
 
 from chartjs.views import JSONView
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.management import call_command
@@ -75,6 +76,16 @@ class MainStatisticsView(LoginRequiredMixin, generic.TemplateView):
         context_data["purchasing_members"] = self.get_purchasing_members_context()
         context_data["working_members"] = self.get_working_members_context()
         context_data["target_average_monthly_basket"] = 225
+
+        if settings.ENABLE_RIZOMA_CONTENT:
+            # Rizoma-specific GT-Membros report: empty regular (ABCD) shifts per type.
+            from tapir.rizoma.services.shift_statistics_service import (
+                RizomaShiftStatisticsService,
+            )
+
+            context_data["empty_abcd_shifts"] = (
+                RizomaShiftStatisticsService.get_empty_abcd_shifts_by_type()
+            )
 
         return context_data
 
