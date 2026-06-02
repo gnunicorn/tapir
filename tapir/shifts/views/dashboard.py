@@ -72,9 +72,13 @@ class UserDashboardView(LoginRequiredMixin,TemplateView):
             ],
         )
 
+        # `deleted=False`: deleted slots are hidden everywhere else (the shift
+        # detail view uses `slots.filter(deleted=False)`), so they must not make a
+        # shift look joinable here — otherwise a fully-filled shift that still has
+        # a leftover deleted slot is wrongly shown as urgent/available.
         joinable_slot_subquery = ShiftSlot.objects.annotate(
             blocked=Exists(slot_blocked_subquery),
-        ).filter(blocked=False, shift=OuterRef("pk"))
+        ).filter(blocked=False, deleted=False, shift=OuterRef("pk"))
 
         # The user is already attending this shift if any of its slots has a valid
         # attendance owned by them. Done as Exists so the user/state pair stays on
@@ -121,6 +125,10 @@ class UserDashboardView(LoginRequiredMixin,TemplateView):
             attendable_slots = []
             seen_slot_types = set()
             for slot in shift.slots.all():
+                if slot.deleted:
+                    # Mirror the SQL filter above and the shift detail view: a
+                    # deleted slot is not a real, joinable slot.
+                    continue
                 valid = slot.get_valid_attendance()
                 if (
                     valid is not None
