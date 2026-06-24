@@ -4,71 +4,80 @@
 {% block body %}
 {% get_display_name_short tapir_user as display_name_short %}
 
+<p>Olá {{ display_name_short }},</p>
+
 <p>
-    Olá {{ display_name_short }},
+    O Tapir chamou-nos 👀 — o teu saldo de turnos chegou a <strong>{{ account_balance }}</strong>.
 </p>
 
 <p>
-    Esta é uma mensagem automática da {{ coop_name }}. Vimos informar-te de que o teu <strong>registo de turnos atingiu
-        {{ account_balance }}</strong>.
+    Isto significa que tens <strong>{{ freeze_after_days }} dias</strong> para te inscreveres em turnos de compensação
+    (que aconteçam nas próximas {{ nb_weeks_in_the_future }} semanas).
 </p>
 
 <p>
-    Tens agora <strong>{{ freeze_after_days }} dias para te inscreveres em turnos de compensação</strong>.
-    Estes turnos devem realizar-se <strong>dentro das próximas {{ nb_weeks_in_the_future }} semanas</strong>.
-</p>
-<p>
-    <strong>⚠️ Atenção</strong>: se não te inscreveres nos turnos de compensação dentro dos próximos {{
-    freeze_after_days
-    }} dias, a tua <strong>conta será temporariamente suspensa</strong>. Isto significa que <strong>não poderás fazer
-        compras na
-        mercearia nem no rizobar</strong>. Por isso, inscreve-te nos teus turnos de compensação assim que possível!
-</p>
-<p>
-    Para mais informações sobre o sistema de turnos, consulta o <a
-        href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Manual
-        de Membros</a>.
-</p>
-<p>
-    Obrigada pela tua compreensão e pela tua colaboração 💚
-</p>
-<p>
-    Saudações rizomáticas,<br />
-    <strong>GTT-membros</strong>
+    ⚠️ Se não te inscreveres dentro desse prazo, a tua conta será temporariamente suspensa 🙈 e não vais conseguir
+    fazer compras na mercearia nem no rizobar 😱
 </p>
 
-<hr>
+<p><strong>Boa notícia</strong> 🥳: ainda vamos a tempo 💪</p>
+
+<p>Queremos ajudar-te a manter a tua conta ativa!</p>
 
 <p>
-    Hi {{ display_name_short }},
+    <strong>Não precisas de recuperar todos os turnos em falta de uma só vez. Basta inscreveres-te em pelo menos um
+    turno nas próximas {{ nb_weeks_in_the_future }} semanas para evitar a suspensão!</strong>
+    Quanto mais cedo tratares disso, melhor 😉
 </p>
 
 <p>
-    This is an automated email from {{ coop_name }}. This is to kindly inform you that <strong>your shift log has
-        reached {{ account_balance }}</strong>.
+    Podes espreitar o <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Manual de Membros da Secção Consumo</a>
+    para mais detalhes.
+    <em>Se estás numa situação que te impede de cumprir os turnos (doença, viagem, licença parental, etc.), lembra-te
+    de que podes pedir uma ausência temporária ou uma isenção ao GTT-Membros.</em>
+</p>
+
+<p>Seguimos rizomátic@s 💚</p>
+
+<p><em>Esta é uma mensagem automática do GTT-Membros.</em></p>
+
+<hr />
+
+<p>Hi {{ display_name_short }},</p>
+
+<p>
+    Tapir gave us a nudge 👀 — your shift balance has reached <strong>{{ account_balance }}</strong>.
 </p>
 
 <p>
-    You now have <strong>{{ freeze_after_days }} days to register for the outstanding shifts as make-up shifts</strong>.
-    These shifts
-    must be within the next {{ nb_weeks_in_the_future }} weeks.
+    This means you have <strong>{{ freeze_after_days }} days</strong> to sign up for make-up shifts (taking place
+    within the next {{ nb_weeks_in_the_future }} weeks).
 </p>
+
 <p>
-    <strong>⚠️ Please note</strong>: If you do not sign up for your catch-up shifts within the next {{ freeze_after_days
-    }} days,
-    your account will be frozen. This means you will not be able to shop at the grocery store/rizobar. So please sign up
-    for your make-up shifts as soon as possible!
+    ⚠️ If you don't sign up within that time, your account will be temporarily suspended 🙈 and you won't be able
+    to shop at the grocery store or rizobar 😱
 </p>
+
+<p><strong>Good news</strong> 🥳: there's still time to fix it 💪</p>
+
+<p>We'd love to help you keep your account active!</p>
+
 <p>
-    For more information on the shift system, please see the <a
-        href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Members
-        Manual</a>.
+    <strong>You don't need to make up all your missing shifts at once. Just sign up for at least one shift within
+    the next {{ nb_weeks_in_the_future }} weeks to avoid suspension!</strong>
+    The sooner you do it, the better 😉
 </p>
+
 <p>
-    Thanks for your understanding and cooperation 💚
+    You can check <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Consumo Members' Manual</a>
+    for more details.
+    <em>If you're in a situation that prevents you from doing shifts (illness, travel, parental leave, etc.), remember
+    that you can request a temporary leave or an exemption to GTT-membros.</em>
 </p>
-<p>
-    Rizomatic greetings,<br />
-    <strong>GTT-membros</strong>
-</p>
+
+<p>We'd love to keep seeing you around Rizoma 💚</p>
+
+<p><em>This is an automatic message from GTT-Membros.</em></p>
+
 {% endblock body %}

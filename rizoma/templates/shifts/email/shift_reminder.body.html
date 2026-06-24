@@ -6,38 +6,50 @@
 
 <p>Olá {{ display_name_short }},</p>
 
-<p>Vimos lembrar-te do teu próximo turno na {{ coop_name }}: {{ shift.get_display_name }}</p>
-
-<p>Para saberes quem são os Rizomis que vão fazer o turno contigo por favor consulta a <a
-        href="https://turnos.rizomacoop.pt/">plataforma de gestão de turno tapir</a>.</p>
-<p>Aproveita para reler (e melhorar, sugerindo alterações) os <a
-        href="https://drive.google.com/drive/u/0/folders/1GPCUpDytZW0WQ0zGpyMSuBO6xiQVQ0vp">Manuais de Turno</a>.</p>
-<p>ICaso não consigas estar presente, podes cancelar o teu turno (pelo menos 24 horas de antecedência) ou encontra uma
-    pessoa para substituir. Por favor consulta o <a
-        href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Manual
-        de Membros</a> para saberes como proceder. </p>
-<p>A responsabilidade do teu turno é tua - <strong>não nos deixes pendurades!</strong></p>
 <p>
-    Obrigada e seguimos Rizomaticcc! 🌿
+    O Tapir pediu-nos para te lembrar do teu próximo turno: <strong>{{ shift.get_display_name }}</strong>
 </p>
 
-<hr>
+<p>
+    Não consegues estar presente? Cancela o teu turno assim que puderes através da
+    <a href="https://turnos.rizomacoop.pt/shifts/dashboard">plataforma de gestão de turno Tapir</a>
+    para que outra pessoa o possa assumir. Se tiveres dúvidas sobre como fazê-lo, consulta o
+    <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Manual de Membros da Secção Consumo</a>.
+</p>
+
+<p>
+    Na plataforma também podes ver quem são os Rizomis que vão fazer o turno contigo. Podes ainda aproveitar para
+    reler os <a href="https://docs.google.com/document/d/1n2gnmg8ldA0U811ac3Sabzk4Hx5TlUST/edit">Manuais de Turno</a>
+    e sugerir melhorias 💡.
+</p>
+
+<p>Obrigada por ajudares a manter a roda rizomática a girar 🌿</p>
+<p>Saudações rizomáticas 💚</p>
+<p><em>Esta é uma mensagem automática do GTT-Membros.</em></p>
+
+<hr />
 
 <p>Hi {{ display_name_short }},</p>
 
-<p>We’d like to remind you of your upcoming shift at {{ coop_name }}: {{ shift.get_display_name }}</p>
-
-<p>To see who the Rizomis working with you will be, please check the <a href="https://turnos.rizomacoop.pt/">Tapir shift
-        management platform.</a></p>
-<p>Take this opportunity to reread (and even help improve by suggesting edits!) the <a
-        href="https://drive.google.com/drive/u/0/folders/1GPCUpDytZW0WQ0zGpyMSuBO6xiQVQ0vp">Shift Manuals</a>.</p>
-<p>If you’re unable to attend, please <strong>cancel your shift (at least 24 hours in advance) or find someone to
-        replace you</strong>.
-    Please consult the <a
-        href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Members
-        Manual</a> for more details on how to proceed.</p>
-<p>The responsibility for your shift is yours — <strong>don’t leave us hanging!</strong></p>
 <p>
-    Thank you, and let’s keep it Rizomaticcc! 🌿
+    Tapir asked us to remind you about your upcoming shift: <strong>{{ shift.get_display_name }}</strong>
 </p>
+
+<p>
+    Can't make it? Please cancel your shift as soon as you can on
+    <a href="https://turnos.rizomacoop.pt/shifts/dashboard">Tapir</a>
+    so someone else can take it. If you're not sure how to do it, check the
+    <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Consumo Members' Manual</a>.
+</p>
+
+<p>
+    On the platform, you can also see which fellow Rizomis will be on shift with you. It's also a good opportunity
+    to revisit the <a href="https://docs.google.com/document/d/1n2gnmg8ldA0U811ac3Sabzk4Hx5TlUST/edit">Shift Manuals</a>
+    — and even suggest improvements 💡
+</p>
+
+<p>Thanks for helping keep the Rizoma wheel turning 🌿</p>
+<p>Rizomatic greetings 💚</p>
+<p><em>This is an automatic message from GTT-Membros.</em></p>
+
 {% endblock body %}

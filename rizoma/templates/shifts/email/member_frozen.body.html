@@ -5,64 +5,61 @@
 {% get_display_name_short tapir_user as display_name_short %}
 
 <p>Olá {{ display_name_short }},</p>
+
 <p>
-    Esta é uma mensagem automática da <strong>{{ coop_name }}</strong>.
-</p>
-<p>
-    Vimos por este meio informar-te que a tua <strong>conta Tapir na Rizoma foi temporariamente
-        suspensa</strong>.Infelizmente, o teu registo de turnos está <strong>abaixo de {{ freeze_threshold }}
-        turnos há mais de {{ freeze_after_days }} dias</strong>.
-</p>
-<p>
-    Enquanto a tua conta estiver suspensa, <strong>não poderás fazer compras na mercearia nem no rizobar</strong>.
-</p>
-<p>
-    Para reativar a tua conta, basta <strong>inscreveres-te em turnos vazios</strong>.Atenção: estes turnos devem
-    ocorrer <strong> dentro das próximas {{ nb_weeks_in_the_future_for_make_up_shifts }} semanas</strong>.
-</p>
-<p>
-    Por isso, compensa os teus turnos em falta assim que possível. Para mais informações sobre o sistema de turnos,
-    consulta o <a
-        href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Manual
-        de Membros</a>.
-</p>
-<p>
-    Muito obrigada!
-</p>
-<p>
-    Saudações cooperativas,<br />
-    <strong>GTT-membros</strong>
+    O Tapir veio falar connosco 👀 Parece que a tua conta está com o estado de turnos abaixo de {{ freeze_threshold }}
+    há mais de {{ freeze_after_days }} dias.
 </p>
 
-<hr>
+<p>Por isso, a tua conta está <strong>temporariamente suspensa</strong> 🙈</p>
+
+<p>Enquanto isso, não vais conseguir fazer compras na mercearia nem no rizobar 😱</p>
+
+<p><strong>Boa notícia:</strong> esta situação é temporária e fácil de resolver 🥳</p>
+
+<p>
+    <strong>Não precisas de recuperar todos os turnos em falta para voltares ao ativo! Basta inscreveres-te em pelo
+    menos um turno disponível nas próximas {{ nb_weeks_in_the_future_for_make_up_shifts }} semanas e a tua conta
+    será reativada 💚</strong>
+</p>
+
+<p>
+    Podes consultar o <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Manual de Membros da Secção Consumo</a>
+    para mais detalhes.
+</p>
+
+<p>Esperamos ver-te de volta em breve 💚</p>
+
+<p><em>Esta é uma mensagem automática do GTT Membros.</em></p>
+
+<hr />
 
 <p>Hi {{ display_name_short }},</p>
+
 <p>
-    This is an automated message from <strong>{{ coop_name }}</strong>.
+    Tapir gave us a heads-up 👀 — it looks like your shift balance has been below {{ freeze_threshold }} for more
+    than {{ freeze_after_days }} days.
 </p>
+
+<p>Because of that, your account is <strong>temporarily suspended</strong> 🙈</p>
+
+<p>Meanwhile, you won't be able to shop at the grocery store or rizobar 😱</p>
+
+<p><strong>Good news:</strong> this situation is temporary and easy to fix 🥳</p>
+
 <p>
-    We’d like to let you know that your <strong>Tapir account at Rizoma has been temporarily frozen</strong>, as your
-    shift balance has been <strong>below {{ freeze_threshold }}
-        shifts for more than {{ freeze_after_days }} days</strong>.
+    <strong>You don't need to make up all your missing shifts to reactivate your account! Just sign up for at least
+    one available shift within the next {{ nb_weeks_in_the_future_for_make_up_shifts }} weeks and your account will
+    be reactivated 💚</strong>
 </p>
+
 <p>
-    While your account is frozen, <strong>you won’t be able to shop at the grocery store or Rizobar</strong>.
+    You can check <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">the Consumo Members' Manual</a>
+    for more details.
 </p>
-<p>
-    To unfreeze your account, simply <strong>sign up for available shifts</strong> — please note that these must take
-    place within the next {{ nb_weeks_in_the_future_for_make_up_shifts }} weeks.
-</p>
-<p>
-    So please make sure to sign up for your missing shifts as soon as possible. You can find more details about how the
-    shift system works in the <a
-        href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Members
-        Manual</a>.
-</p>
-<p>
-    Thank you for your understanding and cooperation 💚
-</p>
-<p>
-    Cooperative greetings,<br />
-    <strong>GTT-membros</strong>
-</p>
+
+<p>We hope to see you back soon 💚</p>
+
+<p><em>This is an automatic message from GTT-Membros.</em></p>
+
 {% endblock body %}

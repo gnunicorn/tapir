@@ -4,34 +4,42 @@
 {% block body %}
 {% get_display_name_short member_infos as display_name_short %}
 
-<p>Caro(a) {{ display_name_short }},</p>
+<p>Olá {{ display_name_short }},</p>
 
-<p>Este é um e-mail automático da <strong>{{ coop_name }}</strong>.</p>
 <p>
-    Procuravas alguém para te substituir no seguinte turno: <strong>{{ shift.get_display_name }}</strong>. Felizmente,
-    outra pessoa assumiu a tua slot para esse turno! 🙂
+    Boas notícias! 🎉 Alguém assumiu o turno para o qual estavas à procura de substituição:
+    <strong>{{ shift.get_display_name }}</strong>.
 </p>
 
-<p>Se ainda não o fizeste, não te esqueças de marcar outro turno para compensar o que vais faltar!</p>
+<p>Se ainda não o fizeste, não te esqueças de marcar outro turno para compensar.</p>
+
 <p>
-    Saudações cooperativas,<br />
-    <strong>GTT-membros</strong>
+    Podes consultar o <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Manual de Membro da Secção Consumo</a>
+    para mais detalhes.
 </p>
 
-<hr>
-<p>Dear {{ display_name_short }},</p>
+<p>Obrigada por ajudares a manter a mercearia a funcionar 💚</p>
 
-<p>This is an automated email from <strong>{{ coop_name }}</strong>.</p>
+<p><em>Esta é uma mensagem automática do GTT Membros.</em></p>
+
+<hr />
+
+<p>Hi {{ display_name_short }},</p>
+
 <p>
-    You were looking for someone to cover your shift: <strong>{{ shift.get_display_name }}</strong>. Fortunately,
-    another
-    person has taken
-    your slot for that shift! 🙂
+    Good news! 🎉 Someone has taken over the shift you were looking to have covered:
+    <strong>{{ shift.get_display_name }}</strong>.
 </p>
 
-<p>If you haven’t done so yet, don’t forget to schedule another shift to make up for the one you’ll be missing!</p>
+<p>If you haven't done so already, don't forget to sign up for another shift to make up for this one.</p>
+
 <p>
-    Cooperative greetings,<br />
-    <strong>GTT-membros</strong>
+    For more details, you can check the
+    <a href="https://docs.google.com/document/d/1BxEWHsJ2y6o3c4z7a-ShwRXMXdQwx_BPOIfVB3igvwg/edit?usp=drive_link">Consumo Section Members Manual</a>.
 </p>
+
+<p>Thanks for helping keep our grocery shop running smoothly 💚</p>
+
+<p><em>This is an automatic message from GTT-Membros.</em></p>
+
 {% endblock body %}
