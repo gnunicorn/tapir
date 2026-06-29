@@ -112,6 +112,8 @@ class ShiftTemplateOverview(LoginRequiredMixin, SelectedUserViewMixin, TemplateV
             .prefetch_related("slot_templates__attendance_template")
         ):
             template: ShiftTemplate = t
+            if template.weekday is None:
+                continue
             weekday_group = grouped_per_day[WEEKDAY_CHOICES[template.weekday][1]]
             start_time_as_string = str(template.start_time)
             if start_time_as_string not in weekday_group:
