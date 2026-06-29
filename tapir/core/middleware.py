@@ -45,6 +45,16 @@ class SendExceptionsToSlackMiddleware:
             # I couldn't figure out the reasons for it, but we need to reduce the spam in the channel.
             return
 
+        if not settings.SLACK_BOT_TOKEN:
+            LOG.error(
+                "Unhandled exception (source: %s, user: %s, request: %s)\n%s",
+                source,
+                request.user,
+                request,
+                stacktrace_string,
+            )
+            return
+
         client = WebClient(token=settings.SLACK_BOT_TOKEN)
 
         error_text = f"{e}"
@@ -81,7 +91,7 @@ class SendExceptionsToSlackMiddleware:
             client.chat_postMessage(channel="C079AQN3HE2", blocks=sections_and_dividers)
         except SlackApiError as e:
             LOG.error(
-                f"Failed to send slack message. Response from slack: {e.response["error"]}"
+                f"Failed to send slack message. Response from slack: {e.response['error']}"
             )
             return
 
@@ -95,7 +105,7 @@ class SendExceptionsToSlackMiddleware:
             )
         except SlackApiError as e:
             LOG.error(
-                f"Failed upload stacktrace. Response from slack: {e.response["error"]}, {e}"
+                f"Failed upload stacktrace. Response from slack: {e.response['error']}, {e}"
             )
             return
 
