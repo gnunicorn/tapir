@@ -29,6 +29,7 @@ class CoopsPtLoginManager:
             algorithms=["RS256"],
             options={"verify_signature": True},
             key=cls.get_rsa_public_key(),
+            audience='coops-api:rizoma',
         )
 
     @classmethod
